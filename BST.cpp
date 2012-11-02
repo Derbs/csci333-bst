@@ -115,11 +115,21 @@ template <typename T>
 void BST<T>::levelTraversal(std::list< Node<T>* >* parents, int level) {
   bool keepGoing = false;
   int treeDepth = depth(root,0,0);
+  int width = pow(2,treeDepth)*3;
   std::list< Node<T>* >* holder = new std::list< Node<T>* >();
-  for(int i = 0; i<pow(2,level); i++) {
+//  std::cout<<"The full depth is::"<<treeDepth<<", the current depth is:: "<<level<<" and the width is::"<<width<<std::endl;
+  //determine starting spacing
+  int startSpace = width-1;
+  for(int i = 0; i<level+1; i++) {
+    startSpace = startSpace/2;
+  }
+  int numEls = pow(2,level);
+  if(treeDepth != level) { 
+    for(int i = 0; i<startSpace; i++) { std::cout<<" "; } //initial spacing before any elements.
+  }
+  for(int i = 0; i<numEls; i++) {
     Node<T>* temp = parents->front();
     parents->pop_front(); 
-    for(int i = 0; i<(pow(2,treeDepth-level)); i++) { std::cout<<" "; }
     if(temp==0) {
       holder->push_back((Node<T>*)0);
       holder->push_back((Node<T>*)0);
@@ -149,14 +159,49 @@ void BST<T>::levelTraversal(std::list< Node<T>* >* parents, int level) {
       std::cout<<temp->getValue();
       keepGoing = true;
     }
+    if(!parents->empty()) {
+      int spacing = (width/numEls)-1;
+      if(spacing!=2) {
+        for(int i = 0; i<spacing; i++) { std::cout<<" ";}
+      }
+      else {
+        if(i%2==0) std::cout<<"   ";
+        else std::cout<<" ";
+      }
+    }
   }
   if(keepGoing) {
-    delete parents;
-    std::cout<<std::endl; 
-    levelTraversal(holder, level+1);
+    delete parents;  //don't need it anymore!
+
+    int lines = (width/4)-1;  //the number of branches needed between this level and next level needed
+    for(int i = 0; i<level; i++) { lines = lines/2; }  //lines are based on level. (half prvLevels)
+    int inBetweenSpacing = 1;     //spacing in between slashes (branches) starts at 1.
+    int spacing = (width/numEls)-1;  //spacing relates to width and the number of elements.  
+    for(int i = 0; i<lines; i++) {   //for every single line we make for a branch...
+      std::cout<<std::endl;          //lets start on a new line.
+      spacing = spacing-2;            //spacing between a right branch and the next left branch decreases by 2 as you continue along.  
+      startSpace = startSpace - 1;    //remember startSpace?  subtract 1 from it and then indent.
+      for(int j = 0; j<startSpace; j++) {
+        std::cout<<" ";   //creating starting space before any slashes
+      }
+      for(int j = 0; j<numEls; j++) {  //now lets create the branches.
+        std::cout<<"/"; //initial backslash for el_j
+        for(int m = 0; m<inBetweenSpacing; m++) {  
+          std::cout<<" ";  //now, the spacing between the left and right branch for el_j
+        }
+        std::cout<<"\\"; //ending forward slash for el_j
+        for(int n = 0; n<spacing; n++) {
+          std::cout<<" ";  //spacing between el_j and el_j+1
+        }
+        
+      }
+      inBetweenSpacing = inBetweenSpacing+2;  //in between spacing increases by 2 as you go down.
+    }
+    std::cout<<std::endl;  //create a new line at the very very end of the branches for the next el.
+    levelTraversal(holder, level+1);  //recursively go to the next level.  
   }
   else {
-    std::cout<<std::endl;
+    std::cout<<std::endl;  //base case.  new line and finish it off.
   } 
 }
 
