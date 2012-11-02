@@ -98,40 +98,55 @@ int BST<T>::pow(int a, int p) {
 }
 
 template <typename T>
+int BST<T>::depth(Node<T>* root, int dpth, int maxDepth) {
+  if(root != 0 && (root->getLeftChild()!=0 || root->getRightChild() != 0)) {
+    int leftDepth = depth(root->getLeftChild(),dpth+1,maxDepth);
+    int rightDepth = depth(root->getRightChild(),dpth+1,maxDepth);
+    if(leftDepth > rightDepth)  return leftDepth; 
+    else return rightDepth;
+  }
+  else {
+    return dpth;
+  }
+  
+}
+
+template <typename T>
 void BST<T>::levelTraversal(std::list< Node<T>* >* parents, int level) {
   bool keepGoing = false;
+  int treeDepth = depth(root,0,0);
   std::list< Node<T>* >* holder = new std::list< Node<T>* >();
-  
   for(int i = 0; i<pow(2,level); i++) {
     Node<T>* temp = parents->front();
     parents->pop_front(); 
+    for(int i = 0; i<(pow(2,treeDepth-level)); i++) { std::cout<<" "; }
     if(temp==0) {
       holder->push_back((Node<T>*)0);
       holder->push_back((Node<T>*)0);
-      std::cout<<" -0- ";
+      std::cout<<"-";
     }
     else if(temp->getLeftChild() == 0 && temp->getRightChild() == 0) {
       //do nothing
       holder->push_back((Node<T>*)0);
       holder->push_back((Node<T>*)0);
-      std::cout<<" "<<temp->getValue()<<" ";
+      std::cout<<temp->getValue();
     }
     else if(temp->getLeftChild() == 0) {
       holder->push_back((Node<T>*)0);
       holder->push_back(temp->getRightChild());
-      std::cout<<" "<<temp->getValue()<<" ";
+      std::cout<<temp->getValue();
       keepGoing = true;
     }
     else if(temp->getRightChild() == 0) {
       holder->push_back(temp->getLeftChild());
       holder->push_back((Node<T>*)0);
-      std::cout<<" "<<temp->getValue()<<" ";
+      std::cout<<temp->getValue();
       keepGoing = true;
     }
     else {
       holder->push_back(temp->getLeftChild());
       holder->push_back(temp->getRightChild());
-      std::cout<<" "<<temp->getValue()<<" ";
+      std::cout<<temp->getValue();
       keepGoing = true;
     }
   }

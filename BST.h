@@ -12,6 +12,7 @@ class BST {
   void traversalPrint(Node<T>* root);
   void levelTraversal(std::list< Node<T>* >* parents, int level);
   int pow(int a, int p);
+  int depth(Node<T>* root, int dpth, int maxDepth);
  public:
   BST<T>();
   ~BST<T>();
